@@ -25,6 +25,9 @@ private:
 	Application& operator=(const Application&);
 public:
 
+	int mousePositionX;
+	int mousePositionY;
+
 	int width;
 	int height;
 
@@ -45,9 +48,12 @@ public:
 	inline virtual void OnLeftMouseButtonUp() { }
 	inline virtual void OnRightMouseButtonUp() { }
 	inline virtual void OnWheelMouseButtonUp() { }
+	inline virtual void OnWheel(int keyCode) { }
 
 	inline virtual void OnKeyUp(int keyCode) { }
 	inline virtual void OnKeyDown(int keyCode) { }
+
+	inline virtual void SetMousePosition(int x, int y) { }
 
 };
 #endif

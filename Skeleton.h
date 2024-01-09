@@ -1,6 +1,8 @@
 #pragma once
 #include <vector>
 #include "Pose.h"
+
+//Keeps track of the bind pose, inverse bind pose, and joint names of an animated model
 class Skeleton
 {
 protected:
@@ -25,5 +27,5 @@ public:
 	std::vector<std::string>& GetJointNames();
 	std::string& GetJointName(unsigned int index);
 }; // End Skeleton class
-};
+
 

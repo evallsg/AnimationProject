@@ -3,6 +3,7 @@
 #define WIN32_EXTRA_LEAN
 #include "./include/glad/glad.h"
 #include <windows.h>
+#include <windowsx.h>
 #include <iostream>
 #include "Application.h"
 
@@ -200,9 +201,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE
 		DWORD thisTick = GetTickCount();
 		float dt = float(thisTick - lastTick) * 0.001f;
 		lastTick = thisTick;
-
+	
 		gApplication = gModeSelector.GetCurrentMode();
 		if (gModeSelector.IsRunning() && gApplication != 0) {
+			/*POINT mousePos;
+			GetCursorPos(&mousePos);
+			gApplication->SetMousePosition(mousePos.x, mousePos.y);*/
 			gApplication->Update(dt);
 		}
 		
@@ -257,111 +261,133 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE
 }
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
+	
+
 	switch (iMsg) {
-	case WM_CLOSE:
-		if (gModeSelector.IsRunning()) {
-			gModeSelector.Shutdown();
-			//delete gApplication;
-			gApplication = 0;
-			DestroyWindow(hwnd);
-		}
-		else {
-			std::cout << "Already shut down!\n";
-		}
-		break;
-	case WM_DESTROY:
-		if (gVertexArrayObject != 0) {
-			HDC hdc = GetDC(hwnd);
-			HGLRC hglrc = wglGetCurrentContext();
-			glBindVertexArray(0);
-			glDeleteVertexArrays(1, &gVertexArrayObject);
-			gVertexArrayObject = 0;
-			wglMakeCurrent(NULL, NULL);
-			wglDeleteContext(hglrc);
-			ReleaseDC(hwnd, hdc);
-			PostQuitMessage(0);
-		}
-		else {
-			std::cout << "Multiple destroy messages\n";
-		}
-		break;
+		case WM_CLOSE:
+			if (gModeSelector.IsRunning()) {
+				gModeSelector.Shutdown();
+				//delete gApplication;
+				gApplication = 0;
+				DestroyWindow(hwnd);
+			}
+			else {
+				std::cout << "Already shut down!\n";
+			}
+			break;
+		case WM_DESTROY:
+			if (gVertexArrayObject != 0) {
+				HDC hdc = GetDC(hwnd);
+				HGLRC hglrc = wglGetCurrentContext();
+				glBindVertexArray(0);
+				glDeleteVertexArrays(1, &gVertexArrayObject);
+				gVertexArrayObject = 0;
+				wglMakeCurrent(NULL, NULL);
+				wglDeleteContext(hglrc);
+				ReleaseDC(hwnd, hdc);
+				PostQuitMessage(0);
+			}
+			else {
+				std::cout << "Multiple destroy messages\n";
+			}
+			break;
 
-	/* Mouse Input */
-	case WM_LBUTTONDOWN:
-		if (gApplication != 0) {
-			gApplication->OnLeftMouseButtonDown();
-		}
-		break;
-	case WM_RBUTTONDOWN:
-		if (gApplication != 0) {
-			gApplication->OnRightMouseButtonDown();
-		}
-		break;
-	case WM_MBUTTONDOWN:
-		if (gApplication != 0) {
-			gApplication->OnWheelMouseButtonDown();
-		}
-		break;
-	case WM_LBUTTONUP:
-		if (gApplication != 0) {
+		/* Mouse Input */
+		case WM_LBUTTONDOWN:
+			if (gApplication != 0) {
+				/*POINT pt;
+				GetCursorPos(&pt);
+				if (DragDetect(hwnd, pt)) {
+					gApplication->OnStartDragging(xPos, yPos);
+				}
+				else {
+					gApplication->OnLeftMouseButtonDown();
+				}*/
+				gApplication->OnLeftMouseButtonDown();
 
-			gApplication->OnLeftMouseButtonUp();
-		}
-		break;
-	case WM_RBUTTONUP:
-		if (gApplication != 0) {
-			gApplication->OnRightMouseButtonUp();
-		}
-		break;
-	case WM_MBUTTONUP:
-		if (gApplication != 0) {
-			gApplication->OnWheelMouseButtonUp();
-		}
-		break;
-	/* Keyboard Input */
-	//key codes: https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
-	case WM_KEYDOWN:
-		if (gApplication != 0) {
-			gApplication->OnKeyDown(wParam);
-		}
-		break;
-	case WM_KEYUP:
+			}
+			break;
+		case WM_RBUTTONDOWN:
+			if (gApplication != 0) {
+				gApplication->OnRightMouseButtonDown();
+			}
+			break;
+		case WM_MBUTTONDOWN:
+			if (gApplication != 0) {
+				gApplication->OnWheelMouseButtonDown();
+			}
+			break;
+		case WM_LBUTTONUP:
+			if (gApplication != 0) {
+				gApplication->OnLeftMouseButtonUp();
+			}
+			break;
+		case WM_RBUTTONUP:
+			if (gApplication != 0) {
+				gApplication->OnRightMouseButtonUp();
+			}
+			break;
+		case WM_MBUTTONUP:
+			if (gApplication != 0) {
+				gApplication->OnWheelMouseButtonUp();
+			}
+			break;
+		/* Keyboard Input */
+		//key codes: https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
+		case WM_KEYDOWN:
+			if (gApplication != 0) {
+				gApplication->OnKeyDown(wParam);
+			}
+			break;
+		case WM_KEYUP:
 		
 
-		//if (wParam == 0x4D) { //M
-		//	int clientWidth = gApplication->width;
-		//	int clientHeight = gApplication->height;
-		//	gModel->width = clientWidth;
-		//	gModel->height = clientHeight;
-		//	gApplication = gModel;
-		//	gApplication->Initialize();
-		//}
-		//if (wParam == 0x43) { //C
-		//	int clientWidth = gApplication->width;
-		//	int clientHeight = gApplication->height;
-		//	gApplication->width = clientWidth;
-		//	gApplication->height = clientHeight;
-		//	gApplication = gCurves;
-		//	gApplication->Initialize();
-		//}
-		//if (wParam == 0x50) { //P
-		//	int clientWidth = gApplication->width;
-		//	int clientHeight = gApplication->height;
+			//if (wParam == 0x4D) { //M
+			//	int clientWidth = gApplication->width;
+			//	int clientHeight = gApplication->height;
+			//	gModel->width = clientWidth;
+			//	gModel->height = clientHeight;
+			//	gApplication = gModel;
+			//	gApplication->Initialize();
+			//}
+			//if (wParam == 0x43) { //C
+			//	int clientWidth = gApplication->width;
+			//	int clientHeight = gApplication->height;
+			//	gApplication->width = clientWidth;
+			//	gApplication->height = clientHeight;
+			//	gApplication = gCurves;
+			//	gApplication->Initialize();
+			//}
+			//if (wParam == 0x50) { //P
+			//	int clientWidth = gApplication->width;
+			//	int clientHeight = gApplication->height;
 
-		//	gApplication = gPoses;
+			//	gApplication = gPoses;
 
-		//	gApplication->Initialize(clientWidth, clientHeight);
-		//}
-		gModeSelector.OnKeyUp(wParam);
-		if (gApplication != 0) {
-			gApplication->OnKeyUp(wParam);
-		}
+			//	gApplication->Initialize(clientWidth, clientHeight);
+			//}
+			gModeSelector.OnKeyUp(wParam);
+			if (gApplication != 0) {
+				gApplication->OnKeyUp(wParam);
+			}
 
-		break;
-	/* ------------------------------------- */
-	case WM_PAINT:
-	case WM_ERASEBKGND:
-		return 0;
+			break;
+		/* ------------------------------------- */
+		case WM_MOUSEWHEEL:
+			if (gApplication != 0) {
+				gApplication->OnWheel(GET_WHEEL_DELTA_WPARAM(wParam));
+			}
+			break;
+		case WM_MOUSEMOVE:
+			if (gApplication != 0) {
+				int xPos = GET_X_LPARAM(lParam);
+				int yPos = GET_Y_LPARAM(lParam);
+				gApplication->SetMousePosition(xPos, yPos);
+			}
+			break;
+		case WM_PAINT:
+		case WM_ERASEBKGND:
+			return 0;
 
 	}
 	if (gNkContext != 0 && gVertexArrayObject != 0) {

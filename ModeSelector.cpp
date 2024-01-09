@@ -3,6 +3,7 @@
 #include "examples/Lab1.h"
 #include "examples/LabCurves.h"
 #include "examples/PosesLab.h"
+#include "examples/LabPoses.h"
 
 ModeSelector::ModeSelector() {
 	mIsRunning = false;
@@ -39,7 +40,10 @@ void ModeSelector::ImGui(nk_context* context) {
 			currentMode = new PosesLab();
 			currentMode->Initialize();
 		}
-
+		if (nk_button_label(context, "Poses")) {
+			currentMode = new LabPoses();
+			currentMode->Initialize();
+		}
 
 		nk_end(context);
 	/*}*/

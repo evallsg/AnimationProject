@@ -75,6 +75,7 @@ void Attribute<vec4>::SetAttribPointer(unsigned int s) {
 	glVertexAttribPointer(s, 4, GL_FLOAT, GL_FALSE, 0, 0);
 }
 
+//bind the attribute to the slot specified in the Shader class
 template<typename T>
 void Attribute<T>::BindTo(unsigned int slot) {
 	glBindBuffer(GL_ARRAY_BUFFER, mHandle);
@@ -82,6 +83,8 @@ void Attribute<T>::BindTo(unsigned int slot) {
 	SetAttribPointer(slot);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
+
+//unbind the attribute to the slot specified in the Shader class
 template<typename T>
 void Attribute<T>::UnBindFrom(unsigned int slot) {
 	glBindBuffer(GL_ARRAY_BUFFER, mHandle);
