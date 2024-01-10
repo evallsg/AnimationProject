@@ -69,6 +69,12 @@ std::vector<unsigned int>& Mesh::GetIndices() {
 	return mIndices;
 }
 
+//setters
+
+void Mesh::SetPositions(std::vector<vec3> positions) {
+	mPosition = positions;
+}
+
 //upload attribute data to the GPU 
 void Mesh::UpdateOpenGLBuffers() {
 	if (mPosition.size() > 0) {
