@@ -9,7 +9,7 @@
 #include "../Pose.h"
 
 enum class DebugDrawMode {
-	Lines, Loop, Strip, Points
+	Lines, Loop, Strip, Points, Triangles
 };
 
 class DebugDraw {

@@ -28,19 +28,22 @@ void ModeSelector::ImGui(nk_context* context) {
 		nk_layout_row_static(context, 25, 168, 1);
 
 		nk_label(context, "Select a Lab to Load", NK_TEXT_LEFT);
-		if (nk_button_label(context, "Lab1")) {
-			currentMode = new Lab1();
-			currentMode->Initialize();
+		if (nk_button_label(context, "Lab1") ) {
+			if (currentMode == 0 || typeid(*currentMode) != typeid(Lab1)) {
+				currentMode = new Lab1();
+				currentMode->Initialize();
+			}
+
 		}
-		if (nk_button_label(context, "Lab2")) {
+		if (nk_button_label(context, "Lab2") && typeid(*currentMode) != typeid(LabCurves)) {
 			currentMode = new LabCurves();
 			currentMode->Initialize();
 		}
-		if (nk_button_label(context, "Lab3")) {
+		if (nk_button_label(context, "Lab3") && typeid(*currentMode) != typeid(PosesLab)) {
 			currentMode = new PosesLab();
 			currentMode->Initialize();
 		}
-		if (nk_button_label(context, "Poses")) {
+		if (nk_button_label(context, "Poses") && typeid(*currentMode) != typeid(LabPoses)) {
 			currentMode = new LabPoses();
 			currentMode->Initialize();
 		}

@@ -84,8 +84,11 @@ void DebugDraw::Draw(DebugDrawMode mode, const vec3& color, const mat4& mvp) {
 	else if (mode == DebugDrawMode::Strip) {
 		::Draw(Size(), DrawMode::LineStrip);
 	}
-	else {
+	else if (mode == DebugDrawMode::Points) {
 		::Draw(Size(), DrawMode::Points);
+	}
+	else {
+		::Draw(Size(), DrawMode::Triangles);
 	}
 	mAttribs->UnBindFrom(mShader->GetAttribute("position"));
 	mShader->UnBind();
