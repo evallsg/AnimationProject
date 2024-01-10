@@ -91,14 +91,12 @@ Interpolation Track<T, N>::GetInterpolation() {
 	return mInterpolation;
 }
 template<typename T, int N>
-void Track<T, N>::SetInterpolation(Interpolation
-	interpolation) {
+void Track<T, N>::SetInterpolation(Interpolation interpolation) {
 	mInterpolation = interpolation;
 }
 
 template<typename T, int N>
-T Track<T, N>::Hermite(float t, const T& p1, const T& s1,
-	const T& _p2, const T& s2) {
+T Track<T, N>::Hermite(float t, const T& p1, const T& s1, const T& _p2, const T& s2) {
 	float tt = t * t;
 
 	float ttt = tt * t;

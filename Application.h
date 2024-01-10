@@ -25,13 +25,17 @@ private:
 	Application& operator=(const Application&);
 public:
 
-	int mousePositionX;
-	int mousePositionY;
+	vec2 mousePosition;
+	int dragging;
+
+	float fov;
+	vec3 cameraPos;
+	vec3 cameraTarget;
 
 	int width;
 	int height;
 
-	inline Application() { }
+	Application();
 	inline virtual ~Application() { }
 	inline virtual void Initialize() { }
 	inline virtual void Initialize(int width, int height) { this->width = width; this->height = height; }
@@ -54,6 +58,8 @@ public:
 	inline virtual void OnKeyDown(int keyCode) { }
 
 	inline virtual void SetMousePosition(int x, int y) { }
+
+	virtual void Orbit(float angle, vec3 axis);
 
 };
 #endif

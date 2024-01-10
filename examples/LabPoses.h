@@ -9,12 +9,10 @@
 
 class LabPoses : public Application {
 protected:
-	int mousePositionX;
-	int mousePositionY;
-	int lastMousePositionX;
-	int lastMousePositionY;
+
 
 	int dragging;
+	vec2 lastMousePosition;
 
 	vec3 cameraPos;
 	vec3 cameraTarget;

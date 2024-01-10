@@ -46,6 +46,8 @@ public:
 	std::vector<ivec4>& GetInfluences();
 	std::vector<unsigned int>& GetIndices();
 
+	//setter
+	void SetPositions(std::vector<vec3> positions);
 	// applies CPU mesh-skinning
 	void CPUSkin(Skeleton& skeleton, Pose& pose);
 	//syncs the vectors holding data to the GPU

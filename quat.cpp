@@ -274,8 +274,7 @@ mat4 quatToMat4(const quat& q) {
 
 quat mat4ToQuat(const mat4& m) {
 	vec3 up = normalized(vec3(m.up.x, m.up.y, m.up.z));
-	vec3 forward = normalized(
-		vec3(m.forward.x, m.forward.y, m.forward.z));
+	vec3 forward = normalized(vec3(m.forward.x, m.forward.y, m.forward.z));
 	vec3 right = cross(up, forward);
 	up = cross(forward, right);
 	return lookRotation(forward, up);

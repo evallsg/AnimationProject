@@ -60,15 +60,15 @@ void LabPoses::Initialize() {
 void LabPoses::Update(float deltaTime) {
 	if (dragging) {
 	
-		int deltaX = lastMousePositionX - mousePositionX;
-		int deltaY = lastMousePositionY - mousePositionY;
+		vec2 delta = lastMousePosition - mousePosition;
+		//int deltaY = lastMousePositionY - mousePositionY;
 
-		lastMousePositionX = mousePositionX;
-		lastMousePositionY = mousePositionY;
+		//lastMousePositionX = mousePositionX;
+		//lastMousePositionY = mousePositionY;
 		/*cameraPos.x += deltaX*0.01;
 		cameraPos.y += deltaY*0.01;*/
-		Orbit((float)deltaX*0.1, vec3(0, 1, 0));
-		Orbit((float)deltaY * 0.1, vec3(1, 0, 0));
+		Orbit((float)delta.x*0.1, vec3(0, 1, 0));
+		Orbit((float)delta.y * 0.1, vec3(1, 0, 0));
 	}
 
 	mPlaybackTime = mClips[mCurrentClip].Sample(mCurrentPose, mPlaybackTime + deltaTime);
@@ -165,13 +165,11 @@ void LabPoses::OnKeyDown(int keyCode) {
 }
 
 void LabPoses::OnLeftMouseButtonDown() {
-	lastMousePositionX = mousePositionX;
-	lastMousePositionY = mousePositionY;
+	lastMousePosition = mousePosition;
 	dragging = 1;
 }
 void LabPoses::OnLeftMouseButtonUp() {
-	lastMousePositionX = mousePositionX;
-	lastMousePositionY = mousePositionY;
+	lastMousePosition = mousePosition;
 	dragging = 0;
 }
 
@@ -180,8 +178,7 @@ void LabPoses::OnWheel(int amount) {
 }
 
 void LabPoses::SetMousePosition(int x, int y) {
-	mousePositionX = x;
-	mousePositionY = y;
+	mousePosition = vec2(x, y);
 }
 
 void LabPoses::Orbit(float angle, vec3 axis) {

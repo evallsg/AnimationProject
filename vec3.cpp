@@ -16,6 +16,22 @@ vec3 operator*(const vec3& l, const vec3& r) {
 	return vec3(l.x * r.x, l.y * r.y, l.z * r.z);
 }
 
+vec3 operator/(const vec3& l, float f) {
+	if (fabs(f) < EPSILON) {
+		if (f < EPSILON) {
+			f = -EPSILON;
+		}
+		else {
+			f = EPSILON;
+		}
+	}
+	return vec3(l.x / f, l.y / f, l.z / f );
+}
+
+vec3 operator/(const vec3& l, const vec3& r) {
+	return vec3(l.x / r.x, l.y / r.y, l.z / r.z);
+}
+
 /*The dot product is used to measure how similar two vectors are.*/
 float dot(const vec3& l, const vec3& r) {
 	return l.x * r.x + l.y * r.y + l.z * r.z;

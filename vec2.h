@@ -14,5 +14,9 @@ struct TVec2 {
 	inline TVec2(T* fv) :
 		x(fv[0]), y(fv[1]) { }
 };
+
+template<typename T>
+inline TVec2<T> operator-(const TVec2<T>& l, const TVec2<T>& r) { return TVec2<T>(l.x - r.x, l.y - r.y); };
+
 typedef TVec2<float> vec2;
 typedef TVec2<int> ivec2;
