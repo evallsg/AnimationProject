@@ -1,17 +1,23 @@
-#include "LabPoses.h"
+#include "LabMesh.h"
 #include "../GLTFLoader.h"
+#include "../Uniform.h"
 
-void LabPoses::Initialize() {
+void LabMesh::Initialize() {
 	cameraPos = vec3(0, 4, 7);
 	cameraTarget = vec3(0, 4, 0);
 	fov = 60.0f;
-	cgltf_data* gltf = LoadGLTFFile("./assets/ComputerAnimation.gltf");
-	Skeleton skeleton = LoadSkeleton(gltf);
+	cgltf_data* gltf = LoadGLTFFile("./assets/Woman.gltf");
+	skeleton = LoadSkeleton(gltf);
+
 	mRestPose = skeleton.GetRestPose();
 	mBindPose = skeleton.GetBindPose();
-	mClips = LoadAnimationClips(gltf);
-	FreeGLTFFile(gltf);
 
+	mMeshes = LoadMeshes(gltf);
+
+	mStaticShader = new Shader("./shaders/static.vs", "./shaders/static.fs");
+	mDiffuseTexture = new Texture("./assets/Woman.png");
+	
+	FreeGLTFFile(gltf);
 	//Debug origin gizmo
 	mUpAxis = new DebugDraw();
 	mUpAxis->Push(vec3(0, 0, 0));
@@ -38,27 +44,21 @@ void LabPoses::Initialize() {
 	mBindPoseVisual->FromPose(mBindPose);
 	mBindPoseVisual->UpdateOpenGLBuffers();
 
-	mCurrentClip = 0;
 	mCurrentPose = mRestPose;
 
 	mCurrentPoseVisual = new DebugDraw();
 	mCurrentPoseVisual->FromPose(mCurrentPose);
 	mCurrentPoseVisual->UpdateOpenGLBuffers();
 
-	
-	// For the UI
-	unsigned int numUIClips = (unsigned int)mClips.size();
-	for (unsigned int i = 0; i < numUIClips; ++i) {
-		if (mClips[i].GetName() == "Walking") {
-			mCurrentClip = i;
-			break;
-		}
+	for (unsigned int i = 0; i < mMeshes.size(); i++) {
+
+		mMeshes[i].CPUSkin(skeleton, mRestPose);
 	}
 }
 
-void LabPoses::Update(float deltaTime) {
+void LabMesh::Update(float deltaTime) {
 	if (dragging) {
-	
+
 		vec2 delta = lastMousePosition - mousePosition;
 		//int deltaY = lastMousePositionY - mousePositionY;
 
@@ -68,51 +68,93 @@ void LabPoses::Update(float deltaTime) {
 		cameraPos.y += deltaY*0.01;*/
 		Orbit((float)delta.x*0.1, vec3(0, 1, 0));
 		Orbit((float)delta.y * 0.1, vec3(1, 0, 0));
+
+	}
+	/*Transform t = mCurrentPose.GetLocalTransform(2);
+	t.rotation = angleAxis(20.0, vec3(1, 0, 0));
+	mCurrentPose.SetLocalTransform(2, t);*/
+	if (mDebug) {
+		for (unsigned int i = 0; i < mMeshes.size(); i++) {
+
+			mMeshes[i].CPUSkin(skeleton, mCurrentPose);
+		}
 	}
 
-	mPlaybackTime = mClips[mCurrentClip].Sample(mCurrentPose, mPlaybackTime + deltaTime);
-	mCurrentPoseVisual->FromPose(mCurrentPose);
+	if (mShowRestPose) {
+		//Rest pose
+		for (unsigned int i = 0; i < mMeshes.size(); i++) {
+
+			mMeshes[i].CPUSkin(skeleton, mRestPose);
+		}
+	}
+	if (mShowBindPose) {
+		//Bind pose
+		for (unsigned int i = 0; i < mMeshes.size(); i++) {
+
+			mMeshes[i].CPUSkin(skeleton, mBindPose);
+		}
+	}
+
 }
 
-void LabPoses::Render(float inAspectRatio) {
+void LabMesh::Render(float inAspectRatio) {
 
 	mat4 projection = perspective(fov, inAspectRatio, 0.01f, 1000.0f);
 	mat4 view = lookAt(cameraPos, cameraTarget, vec3(0, 1, 0));
 	mat4 mvp = projection * view; // No model
 
-	if (mDebug) {
-		mUpAxis->Draw(DebugDrawMode::Lines, vec3(0, 1, 0), mvp);
-		mRightAxis->Draw(DebugDrawMode::Lines, vec3(1, 0, 0), mvp);
-		mForwardAxis->Draw(DebugDrawMode::Lines, vec3(0, 0, 1), mvp);
+	//if (mDebug) {
+	//	mUpAxis->Draw(DebugDrawMode::Lines, vec3(0, 1, 0), mvp);
+	//	mRightAxis->Draw(DebugDrawMode::Lines, vec3(1, 0, 0), mvp);
+	//	mForwardAxis->Draw(DebugDrawMode::Lines, vec3(0, 0, 1), mvp);
 
-	}
-	if (mShowRestPose) {
-		//Rest pose
-		mRestPoseVisual->Draw(DebugDrawMode::Lines, vec3(1, 0, 0), mvp);
-	}
-	if (mShowBindPose) {
-		//Bind pose
-		mRestPoseVisual->Draw(DebugDrawMode::Lines, vec3(0, 1, 0), mvp);
-	}
+	//}
+	
 
-	//Current pose (animated)
-	mCurrentPoseVisual->UpdateOpenGLBuffers();
-	mCurrentPoseVisual->Draw(DebugDrawMode::Lines, vec3(0, 0, 1), mvp);
+	// CPU Skinned Mesh
+	mStaticShader->Bind();
+	mat4 model;
+
+	Uniform<mat4>::Set(mStaticShader->GetUniform("model"), model);
+	Uniform<mat4>::Set(mStaticShader->GetUniform("view"), view);
+	Uniform<mat4>::Set(mStaticShader->GetUniform("projection"), projection);
+	Uniform<vec3>::Set(mStaticShader->GetUniform("light"), vec3(1, 1, 1));
+	mDiffuseTexture->Set(mStaticShader->GetUniform("tex0"), 0);
+
+	for (unsigned int i = 0, size = (unsigned int)mMeshes.size(); i < size; ++i) {
+		mMeshes[i].Bind(mStaticShader->GetAttribute("position"), mStaticShader->GetAttribute("normal"), mStaticShader->GetAttribute("texCoord"), -1, -1);
+		mMeshes[i].Draw();
+		mMeshes[i].UnBind(mStaticShader->GetAttribute("position"), mStaticShader->GetAttribute("normal"), mStaticShader->GetAttribute("texCoord"), -1, -1);
+	}
+	mDiffuseTexture->UnSet(0);
+	mStaticShader->UnBind();
+
+	//if (mShowRestPose) {
+	//	//Rest pose
+	//	mRestPoseVisual->Draw(DebugDrawMode::Lines, vec3(1, 0, 0), mvp);
+	//}
+	//if (mShowBindPose) {
+	//	//Bind pose
+	//	mRestPoseVisual->Draw(DebugDrawMode::Lines, vec3(0, 1, 0), mvp);
+	//}
+
+	////Current pose (animated)
+	//mCurrentPoseVisual->UpdateOpenGLBuffers();
+	//mCurrentPoseVisual->Draw(DebugDrawMode::Lines, vec3(0, 0, 1), mvp);
 }
 
-void LabPoses::Shutdown() {
+void LabMesh::Shutdown() {
 	delete mRestPoseVisual;
 	delete mBindPoseVisual;
 	delete mCurrentPoseVisual;
-	mClips.clear();
 }
 
-void LabPoses::ImGui(nk_context* ctx) {
+void LabMesh::ImGui(nk_context* ctx) {
 	/* init gui state */
 	if (nk_begin(ctx, "Controls", nk_rect(5.0f, 150.f, 190.0f, 150), NK_WINDOW_BORDER | NK_WINDOW_NO_SCROLLBAR)) {
 		/* fixed widget pixel width */
 		nk_layout_row_static(ctx, 30, 80, 1);
-		
+
 		nk_checkbox_label(ctx, "Show origin", &mDebug);
 		nk_checkbox_label(ctx, "Show Rest Pose", &mShowRestPose);
 		nk_checkbox_label(ctx, "Show Bind Pose", &mShowBindPose);
@@ -137,7 +179,7 @@ void LabPoses::ImGui(nk_context* ctx) {
 }
 
 
-void LabPoses::OnKeyDown(int keyCode) {
+void LabMesh::OnKeyDown(int keyCode) {
 	switch (keyCode)
 	{
 	case 0x25: //left arrow
@@ -163,24 +205,24 @@ void LabPoses::OnKeyDown(int keyCode) {
 	}
 }
 
-void LabPoses::OnLeftMouseButtonDown() {
+void LabMesh::OnLeftMouseButtonDown() {
 	lastMousePosition = mousePosition;
 	dragging = 1;
 }
-void LabPoses::OnLeftMouseButtonUp() {
+void LabMesh::OnLeftMouseButtonUp() {
 	lastMousePosition = mousePosition;
 	dragging = 0;
 }
 
-void LabPoses::OnWheel(int amount) {
+void LabMesh::OnWheel(int amount) {
 	fov -= amount / 120;
 }
 
-void LabPoses::SetMousePosition(int x, int y) {
+void LabMesh::SetMousePosition(int x, int y) {
 	mousePosition = vec2(x, y);
 }
 
-void LabPoses::Orbit(float angle, vec3 axis) {
+void LabMesh::Orbit(float angle, vec3 axis) {
 	vec3 front = cameraPos - cameraTarget;
 	//normalize(front);
 	quat rotation = angleAxis(angle, axis);

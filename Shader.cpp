@@ -186,21 +186,19 @@ unsigned int Shader::GetHandle() {
 
 unsigned int Shader::GetAttribute(
 	const std::string& name) {
-	std::map<std::string, unsigned int>::iterator it =
-		mAttributes.find(name);
+	std::map<std::string, unsigned int>::iterator it = mAttributes.find(name);
 	if (it == mAttributes.end()) {
 		std::cout << "Bad attrib index: " << name << "\n";
-		return 0;
+		return -1;
 	}
 	return it->second;
 }
 
 unsigned int Shader::GetUniform(const std::string& name) {
-	std::map<std::string, unsigned int>::iterator it =
-		mUniforms.find(name);
+	std::map<std::string, unsigned int>::iterator it = mUniforms.find(name);
 	if (it == mUniforms.end()) {
 		std::cout << "Bad uniform index: " << name << "\n";
-		return 0;
+		return -1;
 	}
 	return it->second;
 }

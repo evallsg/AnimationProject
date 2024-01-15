@@ -12,12 +12,11 @@ out vec4 FragColor;
 void main() {
 	//get color from the texture
 	vec4 diffuseColor = texture(tex0, uv);
-
 	vec3 n = normalize(norm);
 	vec3 l = normalize(light);
 
 	//simple direct light without ambient light
 	float diffuseIntensity = clamp(dot(n, l), 0, 1);
 
-	FragColor = diffuseColor * diffuseIntensity;
+	FragColor = diffuseColor*diffuseIntensity ;
 }

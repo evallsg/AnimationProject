@@ -1,15 +1,13 @@
 #pragma once
-#ifndef _H_LabPoses_
-#define _H_LabPoses_
+#ifndef _H_LabMesh_
+#define _H_LabMesh_
 #include "../Application.h"
 #include "DebugDraw.h"
-#include <vector>
-#include "../Skeleton.h"
-#include "../Clip.h"
+#include "../Mesh.h"
+#include "../Shader.h"
 
-class LabPoses : public Application {
+class LabMesh: public Application {
 protected:
-
 	int dragging;
 	vec2 lastMousePosition;
 
@@ -21,18 +19,22 @@ protected:
 	int mShowRestPose;
 	int mShowBindPose;
 
+	Skeleton skeleton;
 	Pose mRestPose;
 	Pose mBindPose;
 	Pose mCurrentPose;
-	std::vector<Clip> mClips;
-	unsigned int mCurrentClip;
-	float mPlaybackTime;
+
 	DebugDraw* mUpAxis;
 	DebugDraw* mRightAxis;
 	DebugDraw* mForwardAxis;
 	DebugDraw* mRestPoseVisual;
 	DebugDraw* mBindPoseVisual;
 	DebugDraw* mCurrentPoseVisual;
+	
+	std::vector<Mesh> mMeshes;
+
+	Shader *mStaticShader;
+	Texture *mDiffuseTexture;
 
 	void Orbit(float angle, vec3 axis);
 public:
@@ -51,5 +53,4 @@ public:
 	void SetMousePosition(int x, int y);
 
 };
-
 #endif

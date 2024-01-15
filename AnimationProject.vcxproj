@@ -23,7 +23,7 @@
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{dca45ec0-7c6b-41c9-9fbd-ea2b8435fe85}</ProjectGuid>
     <RootNamespace>AnimationProject</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -42,7 +42,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -145,7 +145,10 @@
     <ClInclude Include="examples\DebugDraw.h" />
     <ClInclude Include="examples\Lab1.h" />
     <ClInclude Include="examples\LabCurves.h" />
+    <ClInclude Include="examples\LabMesh.h" />
+    <ClInclude Include="examples\LabPoses.h" />
     <ClInclude Include="examples\PosesLab.h" />
+    <ClInclude Include="examples\TextureExample.h" />
     <ClInclude Include="Frame.h" />
     <ClInclude Include="GLTFLoader.h" />
     <ClInclude Include="include\cgltf\cgltf.h" />
@@ -156,10 +159,12 @@
     <ClInclude Include="Interpolation.h" />
     <ClInclude Include="mat4.h" />
     <ClInclude Include="math_includes.h" />
+    <ClInclude Include="Mesh.h" />
     <ClInclude Include="ModeSelector.h" />
     <ClInclude Include="Pose.h" />
     <ClInclude Include="quat.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="Skeleton.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Track.h" />
@@ -178,7 +183,10 @@
     <ClCompile Include="examples\DebugDraw.cpp" />
     <ClCompile Include="examples\Lab1.cpp" />
     <ClCompile Include="examples\LabCurves.cpp" />
+    <ClCompile Include="examples\LabMesh.cpp" />
+    <ClCompile Include="examples\LabPoses.cpp" />
     <ClCompile Include="examples\PosesLab.cpp" />
+    <ClCompile Include="examples\TextureExample.cpp" />
     <ClCompile Include="GLTFLoader.cpp" />
     <ClCompile Include="include\cgltf\cgltf.c" />
     <ClCompile Include="include\glad\glad.c" />
@@ -186,10 +194,12 @@
     <ClCompile Include="include\stb_image\stb_image.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="mat4.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="ModeSelector.cpp" />
     <ClCompile Include="Pose.cpp" />
     <ClCompile Include="quat.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Skeleton.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Track.cpp" />
     <ClCompile Include="TransformTrack.cpp" />

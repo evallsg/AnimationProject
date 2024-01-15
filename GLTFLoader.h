@@ -7,6 +7,7 @@
 #include "Track.h"
 #include "Clip.h"
 #include "Skeleton.h"
+#include "Mesh.h"
 
 cgltf_data* LoadGLTFFile(const char* path);
 void FreeGLTFFile(cgltf_data* handle);
@@ -15,6 +16,7 @@ Pose LoadBindPose(cgltf_data* data);
 std::vector<std::string> LoadJointNames(cgltf_data* data);
 std::vector<Clip> LoadAnimationClips(cgltf_data* data);
 Skeleton LoadSkeleton(cgltf_data* data);
+std::vector<Mesh> LoadMeshes(cgltf_data* data);
 
 namespace GLTFHelpers {
 	//gets the local transform of cgltf_node
@@ -26,5 +28,6 @@ namespace GLTFHelpers {
 	void GetScalarValues(std::vector<float>& out, unsigned int compCount, const cgltf_accessor& inAccessor);
 	template<typename T, int N>
 	void TrackFromChannel(Track<T, N>& result, const cgltf_animation_channel& channel);
+	void MeshFromAttribute(Mesh& outMesh, cgltf_attribute& attribute, cgltf_skin* skin, cgltf_node* nodes, unsigned int nodeCount);
 }
 #endif

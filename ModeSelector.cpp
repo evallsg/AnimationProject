@@ -4,6 +4,7 @@
 #include "examples/LabCurves.h"
 #include "examples/PosesLab.h"
 #include "examples/LabPoses.h"
+#include "examples/LabMesh.h"
 
 ModeSelector::ModeSelector() {
 	mIsRunning = false;
@@ -25,8 +26,8 @@ void ModeSelector::ImGui(nk_context* context) {
 	}
 	else {*/
 	static int selected = 0;
-	static const  char* options[] = {"", "Lab 1", "Curves", "Example poses", "Poses" };
-	enum examples { LAB1 = 1, CURVES, EXPOSES, POSES };
+	static const  char* options[] = {"", "Lab 1", "Curves", "Example poses", "Poses", "Meshes" };
+	enum examples { LAB1 = 1, CURVES, EXPOSES, POSES, MESHES };
 
 	nk_begin(context, "Sample Selector", nk_rect(5.0f, 5.0f, 190.0f, 100), NK_WINDOW_MOVABLE | NK_WINDOW_NO_SCROLLBAR);
 	if (nk_tree_push(context, NK_TREE_TAB, "Task selector", NK_MINIMIZED)) {
@@ -35,7 +36,7 @@ void ModeSelector::ImGui(nk_context* context) {
 
 		if (nk_combo_begin_label(context, options[selected], nk_vec2(nk_widget_width(context), 200))) {
 			nk_layout_row_dynamic(context, 25, 1);
-			for (int i = 0; i < 5; ++i)
+			for (int i = 0; i <6; ++i)
 				if (nk_combo_item_label(context, options[i], NK_TEXT_LEFT))
 					selected = i;
 			nk_combo_end(context);
@@ -65,6 +66,13 @@ void ModeSelector::ImGui(nk_context* context) {
 
 			if (currentMode == 0 || typeid(*currentMode) != typeid(LabPoses)) {
 				currentMode = new LabPoses();
+				currentMode->Initialize();
+			}
+			break;
+		case MESHES:
+
+			if (currentMode == 0 || typeid(*currentMode) != typeid(LabMesh)) {
+				currentMode = new LabMesh();
 				currentMode->Initialize();
 			}
 			break;

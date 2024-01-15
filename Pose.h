@@ -21,8 +21,7 @@ public:
 	void SetParent(unsigned int index, int parent);
 
 	Transform GetLocalTransform(unsigned int index);
-	void SetLocalTransform(unsigned int index,
-		const Transform& transform);
+	void SetLocalTransform(unsigned int index, const Transform& transform);
 	Transform GetGlobalTransform(unsigned int index);
 	Transform operator[](unsigned int index);	
 	
